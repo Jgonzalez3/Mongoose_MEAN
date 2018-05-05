@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Quoting Dojo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container border border-primary rounded">
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center">Welcome to Quoting Dojo</h1>
+            </div>
+        </div>
+        
+        <% if(messages.quote) { %>
+            <% for (var x of messages.quote) { %>
+            <h3 class="text-danger"><%= x %></h3>
+            <% } %>
+        <% } %>
+        <form action="/quotes" method="POST">
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-secondary">Your Name: </h6>
+                <input class="form-control" type="text" placeholder="Javier" name="name">
+                <h6 class="text-secondary">Your Quote: </h6>
+                <textarea class="form-control" name="quote" placeholder="I make lame jokes."></textarea>
+                <br>
+                <button class="btn btn-success float-left" type="submit">Add my Quote!</button>
+                <a class="btn btn-primary float-right" role="button" href="/quotes">Skip to quote!</a>
+            </div>
+        </div>
+        </form>
+        <br>
+    </div>
+</body>
+</html>
