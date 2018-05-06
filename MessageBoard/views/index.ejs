@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Message Board</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+        <a class="navbar-brand" href="/"><strong>The Dojo Message Board</strong></a>
+    </nav>
+    <br>
+    <div class="container">
+        <form action="/postmessage" method="POST">
+            <% if(messages.message) { %>
+                <% for (var x of messages.message) { %>
+                <h6 class="text-danger"><%= x %></h6>
+                <% } %>
+            <% } %>
+        <div class="row">
+            <div class=" col-sm-6 col-md-4">
+                <p>Name: <input class="form-control form-control-sm" name="name"></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+                <p>Message: <textarea class="form-control" name="message"></textarea><br>
+                <button class="btn btn-primary float-right" type="submit">Post Message</button>
+            </div>
+        </div>
+        </form>
+        <% for(var m in messagequery){ %>
+        <div class="row">
+            <div class="col-md-8">
+                <h5>Name: <%= messagequery[m].name %></h5>
+                <h5>Message: <%= messagequery[m].message %></h5>
+            </div>
+        </div>
+        <% for(var c = 0; c<messagequery[m].comments.length; c++){ %>
+        <div class="row">
+            <div class="col-sm-1 col-md-1"></div>
+            <div class="col-sm-8 col-md-8">
+                <br>
+                <h6>Name: <%= messagequery[m].comments[c].name%></h6>
+                <h6>Comment: <%= messagequery[m].comments[c].comment%></h6>
+            </div>
+        </div>
+        <% } %>
+        <form action="/postcomment" method="POST">
+            <% if(messages.commenterror) { %>
+                <% for (var y of messages.commenterror) { %>
+                <h6 class="text-danger"><%= y %></h6>
+                <% } %>
+            <% } %>
+        <div class="row">
+            <div class="col-sm-1 col-md-1"></div>
+            <div class="col-sm-5 col-md-3">
+                
+                <p>Name:<input class="form-control form-control-sm" name="name"></p>
+                <input type="hidden" name="messageid" value="<%= messagequery[m]._id %>">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1 col-md-1"></div>
+            <div class="col-sm-11 col-md-9">
+                <p>Comment:<textarea class="form-control" name="comment"></textarea></p><br>
+                <button class="btn btn-success float-right" type="submit">Post Comment</button>
+            </div>
+        </div>
+        </form>
+        <% } %>
+    </div>
+</body>
+</html>
