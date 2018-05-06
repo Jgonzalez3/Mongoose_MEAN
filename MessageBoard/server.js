@@ -33,23 +33,16 @@ app.set('view engine', 'ejs');
 const flash = require('express-flash');
 app.use(flash());
 
-app.get("/", function(req, res){
+app.get("/", (req, res) => {
     var query;
-    Message.find({}, null, {sorted: 'createdAt'}, function(err, mess){
-        if(err){
-            console.log("ERROR with QUERY!!");
-        } else{
-            console.log("Query Success!!!");
-            query = mess;
-            console.log(query);
-            res.render("index", {messagequery: query});
-        }
+    Message.find({}, null, {sorted: 'createdAt'},(err, mess)=>{
+        err = err ? console.log("ERROR with QUERY!!") : console.log("Query Success!!!"), query = mess, console.log(query), res.render("index", {messagequery: query})
     })
 })
-app.post("/postmessage", function(req, res){
+app.post("/postmessage", (req, res) => {
     console.log("POSTDATA", req.body);
     var message = new Message({name: req.body.name, message: req.body.message});
-    message.save(function(err){
+    message.save((err) => {
         if(err){
             console.log("Display Error:",err);
             for(var key in err.errors){
@@ -62,23 +55,15 @@ app.post("/postmessage", function(req, res){
         }
     })
 })
-app.post("/postcomment", function(req, res){
+app.post("/postcomment", (req, res) =>{
     console.log("POSTDATA", req.body);
     var comment = new Comment({name: req.body.name, comment: req.body.comment});
     var comerror;
     console.log("COMMENT", comment);
     var id = req.body.messageid;
-    Message.findById(id, function(err, update){
-        if(err){
-            res.redirect("/");
-        }else{
-            console.log("UPDATE ELSE HIT")
-            console.log(update.comments)
-            console.log(comment);
-            update.comments.push(comment);
-            update.save(update);
-        }
-        comment.save(function(error){
+    Message.findById(id, (err, update) =>{ 
+        err = err ? res.redirect("/") : console.log("UPDATE ELSE HIT"), console.log(update.comments), console.log(comment), update.comments.push(comment), update.save(update);
+        comment.save((error) => { 
             if(error){
                 console.log("Display ERRORS:", error);
                 for(var key in error.errors){

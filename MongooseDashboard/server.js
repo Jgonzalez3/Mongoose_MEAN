@@ -9,12 +9,12 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/sharkdashboard');
 var SharkSchema = new mongoose.Schema({
-    name: {type: String, required: true},
-    length: {type: String, required: true},
-    weight: {type: String, required: true},
+    name: {type: String, required: [true, "Shark Name Required"]},
+    length: {type: String, required: [true, "Shark Length Required"]},
+    weight: {type: String, required: [true, "Shark Weight Required"]},
     description: {type: String},
-    image: {type: String, required: true},
-    food: {type: String, required: true}
+    image: {type: String, required: [true, "Shark Image Url Required"]},
+    food: {type: String, required: [true, "Food item is Required"]}
 }, {timestamps: true})
 mongoose.model('Shark', SharkSchema);
 var Shark = mongoose.model('Shark');
@@ -32,44 +32,23 @@ const flash = require('express-flash');
 app.use(flash());
 
 // root route to render the index.ejs view
-app.get('/', function(req, res) {
+app.get('/', (req, res) =>{
     var query;
-    Shark.find({}, null, {sorted: 'name'}, function(err, sharks){
-        if(err){
-            console.log("error with query!!");
-        } else{
-            console.log("successful Query!!");
-            query = sharks;
-            console.log(sharks);
-        }
-        res.render("index", {sharks: query});
+    Shark.find({}, null, {sorted: 'name'}, (err, sharks) =>{
+        err = err ? console.log("error with query!!") : console.log("successful Query!!"), query = sharks, console.log(sharks), res.render("index", {sharks: query})
     })
 })
-app.get("/sharks/new", function(req, res){
+app.get("/sharks/new", (req, res) => {
     res.render("addshark");
 })
-app.post("/addshark", function(req, res){
+app.post("/addshark", (req, res) => {
     console.log("POSTDATA", req.body);
     var shark = new Shark({name: req.body.name, length: req.body.length, weight: req.body.weight, description: req.body.description, image: req.body.image, food: req.body.food});
-    shark.save(function(err){
+    shark.save((err) => {
         if(err){
             console.log("Error with Insert", err);
             for(var key in err.errors){
-                if(err.errors[key].path == "name"){
-                    req.flash('shark', "Shark Name Required")
-                }
-                if(err.errors[key].path == "length"){
-                    req.flash('shark', "Shark Length Required")
-                }
-                if(err.errors[key].path == "weight"){
-                    req.flash('shark', "Shark Weight Required")
-                }
-                if(err.errors[key].path == "image"){
-                    req.flash('shark', "Shark Image Url Required")
-                }
-                if(err.errors[key].path == "food"){
-                    req.flash('shark', "Food item is Required")
-                }
+                req.flash('shark', err.errors[key].message)
             }
             res.redirect("/sharks/new");
         } else{
@@ -78,72 +57,42 @@ app.post("/addshark", function(req, res){
         }
     })
 })
-app.get("/sharks/:id", function(req, res){
+app.get("/sharks/:id", (req, res) =>{
     var query;
     console.log("REQ.PARAMS", req.params)
     console.log("REQ.PARAMS.ID", req.params.id)
     var id = req.params.id;
-    Shark.findById(id, function(err, shark){
-        if(err){
-            console.log("error with query!!");
-            res.redirect("/");
-        } else{
-            console.log("successful Query!!");
-            query = shark;
-            console.log(shark);
-        }
-        res.render("oneshark", {shark: query});
+    Shark.findById(id, (err, shark) => {
+        err = err ? res.redirect("/") & console("Query Failed"): console.log("successful Query!!"), query = shark, console.log(shark), res.render("oneshark", {shark: query});
     })
 })
-app.get("/sharks/edit/:id", function(req, res){
+app.get("/sharks/edit/:id", (req, res) =>{
     var query;
     console.log("REQ.PARAMS", req.params)
     console.log("REQ.PARAMS.ID", req.params.id)
     var id = req.params.id;
-    Shark.findById(id, function(err, shark){
-        if(err){
-            console.log("error with query!!");
-            res.redirect("/");
-        } else{
-            console.log("successful Query!!");
-            query = shark;
-            console.log(shark);
-        }
-        res.render("editshark", {shark: query});
+    Shark.findById(id, (err, shark) => {
+        err =  err ? console.log("error with query!!") & res.redirect("/"): console.log("successful Query!!"), query = shark, console.log(shark), res.render("editshark", {shark: query});
     })
 })
-app.post("/sharks/:id", function(req, res){
+app.post("/sharks/:id", (req, res) =>{
     console.log("POSTDATA", req.body);
     console.log("REQ.PARAMS", req.params)
     console.log("REQ.PARAMS.ID", req.params.id)
     var id = req.params.id;
     Shark.findByIdAndUpdate(id, {name: req.body.name, length: req.body.length, weight: req.body.weight, description: req.body.description, image: req.body.image, food: req.body.food}, function(err, update){
-        if(err){
-            console.log("Error with Insert", err);
-            res.redirect("/sharks/edit/"+id);
-        } else{
-            console.log("UPDATE", update);
-            update.update();
-            console.log("updated Shark successfully!!!");
-            res.redirect("/sharks/"+id)
-        }
+        err = err ? console.log("Error with Insert", err) & res.redirect("/sharks/edit/"+id): console.log("UPDATE", update), update.update(), console.log("updated Shark successfully!!!"),res.redirect("/sharks/"+id);
     })
 })
-app.post("/sharks/destroy/:id", function(req, res){
+app.post("/sharks/destroy/:id", (req, res) =>{
     console.log("REQ.PARAMS", req.params)
     console.log("REQ.PARAMS.ID", req.params.id)
     var id = req.params.id;
-    Shark.findByIdAndRemove(id, function(err, shark){
-        if(err){
-            console.log("Error with Deletion", err);
-            res.redirect("/sharks/"+id);
-        } else{
-            console.log("Deleted Shark successfully!!!");
-            res.redirect("/")
-        }
+    Shark.findByIdAndRemove(id, (err, shark) => {
+        err = err ? console.log("Error with Deletion", err) & res.redirect("/sharks/"+id): console.log("Deleted Shark successfully!!!"), res.redirect("/")
     })
 })
 
-app.listen(8000, function() {
+app.listen(8000, () => {
     console.log("listening on port 8000");
-});
+})
