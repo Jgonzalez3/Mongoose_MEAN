@@ -1,8 +1,11 @@
-const mongoose = require('mongoose'),
-    User = mongoose.model('User')
-module.exports = (app)=>{
+const mongoose = require('mongoose');
+const User = mongoose.model('User')
+
+module.exports = (app, quotes)=>{
+    var quotes = require("../controllers/quotes")()
+    console.log(quotes);
     app.get("/", (req, res)=>{
-        res.render("index");
+        quotes.index(req, res);
     });
     app.get("/quotes", (req, res)=>{
         var query;
