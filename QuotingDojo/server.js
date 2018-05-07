@@ -9,8 +9,8 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/quoting_dojo');
 var UserSchema = new mongoose.Schema({
-    name: {type: String, required: true},
-    quote: {type: String, required: true}
+    name: {type: String, required: [true, "Name is required"]},
+    quote: {type: String, required: [true, "Quote is Required"]}
 }, {timestamps: true})
 mongoose.model('User', UserSchema);
 var User = mongoose.model('User');
@@ -27,47 +27,8 @@ app.set('view engine', 'ejs');
 const flash = require('express-flash');
 app.use(flash());
 // root route to render the index.ejs view
-app.get('/', function(req, res) {
-    res.render("index");
-})
-app.get('/quotes', function(req, res) {
-    var query;
-    //grab session data to render in HTML
-    User.find({}, null, {sort: '-createdAt'}, function(err, users){
-        if(err){
-            console.log("error with query");
-        } else{
-            console.log("successful query");
-            query = users;
-        }
-        res.render("quotes", {quotes: query});  
-    })
-})
-// post route for adding a user
-app.post('/quotes', function(req, res) {
-    //post form data here into session req.body is form data
-    console.log("POST DATA", req.body);
-    var user = new User({name: req.body.name, quote: req.body.quote});
-    user.save(function(err){
-        if(err){
-            //user c.log below to display properties of errors for customization of messages
-            console.log('something went wrong', err);
-            for(var key in err.errors){
-                if(err.errors[key].path == 'name'){
-                    req.flash('quote', "Name is required");
-                }
-                if(err.errors[key].path == 'quote'){
-                    req.flash('quote', "Quote is required");
-                }
-            }
-            res.redirect("/");
-        } else{
-            console.log('successfully added a user!');
-            res.redirect("/");
-        }
-    })
-})
-// tell the express app to listen on port 8000
+require('./server/config/routes.js')(app)
+
 app.listen(8000, function() {
-        console.log("listening on port 8000");
-});
+    console.log("listening on port 8000");
+})
