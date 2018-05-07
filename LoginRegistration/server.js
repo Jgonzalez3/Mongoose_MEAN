@@ -8,14 +8,16 @@ var bodyParser = require('body-parser');
 //Mongoose connections below
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/login_reg');
-
+var uniqueValidator = require("mongoose-unique-validator");
 var UserSchema = new mongoose.Schema({
     firstname: {type: String, required: [true, "First Name Required"]},
     lastname: {type: String, required: [true, "Last Name Required"]},
-    email: {type: String, required: [true, "Email Required"]},
+    email: {type: String, unique: true, uniqueCaseInsensitive: true , required: [true, "Email Required"]},
     password: {type: String, required: [true, "Password Required"]},
     birthdate: {type: Date, required: [true, "Birthdate required"]},
 }, {timestamps: true});
+//plug in unique validator
+UserSchema.plugin(uniqueValidator, {message: `This {PATH} is already registered`});
 var User = mongoose.model('User', UserSchema);
 mongoose.Promise = global.Promise;
 // use bodyParser!
@@ -49,16 +51,6 @@ app.get("/", (req, res) => {
 
 app.post("/register", (req, res) => {
     console.log("POST DATA", req.body);
-    var count = 0;
-    User.find({'email': req.body.email}, (err, reguser)=>{
-        console.log("REGUSER LENGTH", reguser.length)
-        count = reguser.length;
-        console.log("COUNT", count)
-        if(count > 0){
-            req.flash("emailused", "This email is already registered");
-            return res.redirect("/");
-        }
-    })
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
         console.log("HASH PW: ",hash);
         var newuser = new User({firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email, password: req.body.password, birthdate: req.body.birthdate});
