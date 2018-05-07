@@ -1,6 +1,7 @@
+require("../models/user");
 const mongoose = require('mongoose'),
     User = mongoose.model('User')
-require('../config/routes.js')
+
 module.exports = ()=>{
     return{
         index: (req, res)=>{

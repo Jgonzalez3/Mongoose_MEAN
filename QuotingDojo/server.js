@@ -8,12 +8,13 @@ var bodyParser = require('body-parser');
 //Mongoose connections below
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/quoting_dojo');
-var UserSchema = new mongoose.Schema({
-    name: {type: String, required: [true, "Name is required"]},
-    quote: {type: String, required: [true, "Quote is Required"]}
-}, {timestamps: true})
-mongoose.model('User', UserSchema);
-var User = mongoose.model('User');
+// require("./server/models/user");
+// var UserSchema = new mongoose.Schema({
+//     name: {type: String, required: [true, "Name is required"]},
+//     quote: {type: String, required: [true, "Quote is Required"]}
+// }, {timestamps: true})
+// mongoose.model('User', UserSchema);
+// var User = mongoose.model('User');
 mongoose.Promise = global.Promise;
 // use bodyParser!
 app.use(bodyParser.urlencoded({ extended: true }));
