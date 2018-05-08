@@ -3,7 +3,6 @@ const path = require("path");
 const fs = require("fs");
 
 module.exports = ()=>{
-    var mongoose = require('mongoose');
     mongoose.connect('mongodb://localhost/login_reg');
     mongoose.Promise = global.Promise;
 }
