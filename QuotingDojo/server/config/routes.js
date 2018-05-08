@@ -1,5 +1,3 @@
-require("../models/user");
-
 module.exports = (app)=>{
     var quotes = require("../controllers/quotes")()
     console.log(quotes);

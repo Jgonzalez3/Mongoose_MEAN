@@ -1,8 +1,5 @@
-require("../models/user");
-const mongoose = require('mongoose'),
-    User = mongoose.model('User')
-
 module.exports = ()=>{
+    require("../models/user")();
     return{
         index: (req, res)=>{
             res.render("index")
